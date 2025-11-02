@@ -7,23 +7,31 @@ import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
 import Button from "../components/ui/button/Button";
 import { UploadIcon } from "../icons";
-import { useModal } from "../hooks/useModal";
+// import { useModal } from "../hooks/useModal";
 import { Modal } from "../components/ui/modal";
-// import Input from "../components/form/input/InputField";
 import Radio from "../components/form/input/Radio";
 import Label from "../components/form/Label";
-// import FileInputExample from "../../components/form/form-elements/FileInputExample";
-import DropzoneComponent from "../components/form/form-elements/DropZone";
+import DropzoneThumbnailComponent from "../components/form/form-elements/DropZoneThumbnail";
 import DropzoneVideoComponent from "../components/form/form-elements/DropZoneVideo";
-// import TextArea from "../input/TextArea";
+import Switch from "../components/form/switch/Switch"
 import TextArea from "../components/form/input/TextArea";
+import { saveVideoMetadata } from '../services/api'
+
+import { useVideoEdit } from "../context/VideoEditContext";
+
+// import Input from "../components/form/input/InputField";
+// import FileInputExample from "../../components/form/form-elements/FileInputExample";
+// import TextArea from "../input/TextArea";
+
 
 const AppHeader: React.FC = () => {
-  const { isOpen, openModal, closeModal } = useModal();  // Get modal state
+  // const { isOpen, openModal, closeModal } = useModal();  // Get modal state
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
 
-
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+
+  // ✅ ADD THIS LINE - Use context modal control
+  const { openModal } = useVideoEdit();
 
   const handleToggle = () => {
     if (window.innerWidth >= 1024) {
@@ -52,7 +60,13 @@ const AppHeader: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, 
+  []);
+
+  // ✅ FIX THIS FUNCTION - Change openVideoModal to openModal
+  const handleUploadClick = () => {
+    openModal(null); // Pass null to open in CREATE mode
+  };
 
   return (
     <header className="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b">
@@ -144,121 +158,341 @@ const AppHeader: React.FC = () => {
           </div>
           {/* <!-- User Area --> */}
           <UserDropdown />
-          <Button
+          {/* <Button
               size="sm"
               variant="primary"
               startIcon={<UploadIcon className="size-5" />}
               onClick={openModal}
             >
               Upload
+          </Button> */}
+
+          {/* ✅ CHANGE onClick to handleUploadClick */}
+          <Button size="sm" variant="primary" startIcon={<UploadIcon className="size-5" />} onClick={handleUploadClick}>
+            Upload
           </Button>
+
         </div>
       </div>
       {/* Pass the modal state and functions to UploadModel */}
-      <UploadModel isOpen={isOpen} openModal={openModal} closeModal={closeModal} />
+      {/* <UploadModel isOpen={isOpen} openModal={openModal} closeModal={closeModal} fileName={fileName}  /> */}
+      <UploadModel
+        // isOpen={isOpen}
+        // openModal={openModal}
+        // closeModal={closeModal}
+        // fileName={fileName}
+        // handleFileUpload={handleFileUpload}  // Pass the function here
+      />
     </header>
   );
 };
 
 export default AppHeader;
 
-interface UploadModelProps {
-  isOpen: boolean;
-  openModal: () => void;
-  closeModal: () => void;
-}
+// interface UploadModelProps {
+//   isOpen: boolean;
+//   openModal: () => void;
+//   closeModal: () => void;
+// }
 
-function UploadModel({ isOpen, closeModal }: UploadModelProps) {
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving changes...");
+function UploadModel(
+  // { isOpen, closeModal }: UploadModelProps
+) {
+  const { isOpen, closeModal, videoData } = useVideoEdit(); // Get context data
+ const [isEditMode, setIsEditMode] = useState(false);
+
+  const [originalFileName, setOriginalFileName] = useState('');
+  const [videoTitle, setVideoTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [videoS3Key, setVideoS3Key] = useState<string | null>(null); // Store S3 key for video
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [selectedValue, setSelectedValue] = useState<string>("option2");
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoId, setVideoId] = useState<number | null>(null);
+  const [videoStatus, setvideoStatus] = useState<string>('Public');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const CLOUDFRONT_URL = "https://d1f96o9nypo8e0.cloudfront.net/";
+
+  // useEffect(() => {
+  //   if (videoData) {
+  //     // EDIT MODE - Pre-fill existing data
+  //     setIsEditMode(true);
+  //     setVideoId(videoData.id);
+  //     setVideoTitle(videoData.title);
+  //     setDescription(videoData.description || '');
+  //     setVideoS3Key(videoData.s3_key);
+  //     setThumbnail(videoData.thumbnail ? `${CLOUDFRONT_URL}${videoData.thumbnail}` : null);
+  //     setOriginalFileName(videoData.filename);
+  //     setvideoStatus(videoData.status === 'PRIVATE' ? 'Private' : 'Public');
+  //     setSelectedValue(videoData.eighteenPlus ? "option1" : "option2");
+  //   }
+  // }, [videoData]);
+
+
+
+  // ✅ ADD ELSE BLOCK HERE - Reset form when videoData is null
+  useEffect(() => {
+    if (videoData) {
+      // EDIT MODE - Pre-fill existing data
+      setIsEditMode(true);
+      setVideoId(videoData.id);
+      setVideoTitle(videoData.title);
+      setDescription(videoData.description || '');
+      setVideoS3Key(videoData.s3_key);
+      setThumbnail(videoData.thumbnail ? `${CLOUDFRONT_URL}${videoData.thumbnail}` : null);
+      setOriginalFileName(videoData.filename);
+      setvideoStatus(videoData.status === 'PRIVATE' ? 'Private' : 'Public');
+      setSelectedValue(videoData.eighteenPlus ? "option1" : "option2");
+    } else {
+      // ✅ THIS WAS MISSING - CREATE MODE: Reset form to defaults
+      setIsEditMode(false);
+      setOriginalFileName('');
+      setVideoTitle('');
+      setDescription('');
+      setVideoS3Key(null);
+      setThumbnail(null);
+      setSelectedValue("option2");
+      setVideoFile(null);
+      setVideoId(null);
+      setvideoStatus('Public');
+    }
+  }, [videoData]);
+
+  const handleSave = async () => {
+    if (!videoId) {
+      console.warn("No video ID available");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const payload = {
+        orginial_file_titile: originalFileName,
+        video_title: videoTitle,
+        description: description,
+        eighteenPlus: selectedValue === "option1",
+        video_id: videoId,
+      };
+
+      console.log("Saving payload:", payload);
+      
+      // Call your API function here
+      const response = await saveVideoMetadata(payload);
+      if (response) {
+        console.log("✅ Video metadata saved successfully");
+        // handleCloseModal(); // Use handleCloseModal to reset all data
+      }
+
+      // Placeholder - replace with actual API call
+      // alert("Video metadata saved successfully!");
+      // handleCloseModal(); // Reset all data before closing
+    } catch (err) {
+      console.error("❌ Error saving video metadata:", err);
+      alert("Error saving video metadata");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOriginalFileName('');
+    setVideoTitle('');
+    setDescription('');
+    setThumbnail(null);
+    setSelectedValue("option2");
+    setVideoFile(null);
+    setVideoS3Key(null);
+    setVideoId(null);
+    setVideoId(null)
     closeModal();
   };
-  
-  const [selectedValue, setSelectedValue] = useState<string>("option2");
 
   const handleRadioChange = (value: string) => {
     setSelectedValue(value);
   };
 
+  const handleFileNameChange = (name: string) => {
+    // Remove video extension from title
+    const videoExtensions = /\.(mp4|webm|avi|mov|mkv|flv|ogg|quicktime)$/i;
+    const titleWithoutExtension = name.replace(videoExtensions, '');
+    setVideoTitle(titleWithoutExtension);
+    setOriginalFileName(titleWithoutExtension); // Store original file name with extension
+  };
+
+  const handleVideoFileChange = (file: File, vId: number) => {
+    setVideoFile(file);
+    setVideoId(vId);
+    console.log("VideoId set to:", vId);
+  };
+
+    // Explicitly typing the parameter to avoid the 'any' issue
+  const handleSwitchChange = () => {
+    setvideoStatus((prevStatus: string) =>
+      prevStatus === 'Public' ? 'Private' : 'Public'
+    );
+  };
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={closeModal}
+      onClose={handleCloseModal}
       className="w-full h-[95%] mt-2 mx-5 sm:h-[95%] sm:mt-2 max-w-[960px] lg:mx-5 lg:my-0"
-
     >   
       <div className="no-scrollbar relative w-full h-full sm:rounded-xl rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11 overflow-y-auto">
         <div className="px-2 pr-14">
           <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-            Upload video
+            {videoData ? "Edit Video" : "Upload Video"}
           </h4>
           <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-            Update your details to keep your profile up-to-date.
-          </p>
+             {videoData ? "Update your video details" : "Upload and configure your new video"}
+          </p>                  
         </div>
         <form className="flex flex-col">
           <div className="custom-scrollbar h-full md:h-full overflow-y-auto px-2 pb-3">
             <div>
-              {/* <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                Social Links
-              </h5> */}
-              <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+              
+              {/* <div>
+                <Label>Video</Label>
+                <DropzoneVideoComponent 
+                  onFileNameChange={handleFileNameChange} 
+                  onThumbnailGenerated={setThumbnail}
+                  onVideoFileChange={handleVideoFileChange}
+                  onVideoUpdated={setVideoFile}
+                  video_Id={videoId}
+                />
+              </div> */}
+
+               {/* Show video upload in CREATE mode */}
+              {/* {!isEditMode && ( */}
                 <div>
-                  <Label>Title</Label>
-                  <TextArea
-                    value={''}
-                    // onChange={(value) => setMessage(value)}
-                    rows={6}
-                    placeholder="Please enter a video title."
+                  <Label>Video</Label>
+                  <DropzoneVideoComponent 
+                    onFileNameChange={handleFileNameChange} 
+                    onThumbnailGenerated={setThumbnail}
+                    onVideoFileChange={handleVideoFileChange}
+                    onVideoUpdated={setVideoFile}
+                    video_Id={videoId}
+                    isEdit = {isEditMode}
+                    videoUrl = {videoS3Key}
+                  />
+                </div>
+              {/* )} */}
+
+              {/* Show existing video player in EDIT mode */}
+              {/* {isEditMode && videoS3Key && (
+                <div>
+                  <Label>Video</Label>
+                  <div className="border border-gray-300 rounded-xl overflow-hidden bg-black">
+                    <video
+                      src={`${CLOUDFRONT_URL}${videoS3Key}`}
+                      controls
+                      className="w-full h-[400px] object-contain"
                     />
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <span className="font-semibold">File:</span> {originalFileName}
+                  </p>
+                </div>
+              )} */}
+
+              <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2 mt-7">
+
+                <div>
+                  <Label>Thumbnail</Label>
+
+                  {/* {isEditMode ? (
+                    // EDIT MODE: Show existing thumbnail, no upload
+                    <div className="border border-gray-300 rounded-xl overflow-hidden">
+                      <img 
+                        src={thumbnail || "/default-thumbnail.jpg"} 
+                        alt="Current thumbnail" 
+                        className="w-full h-[200px] object-cover"
+                      />
+                    </div>
+                  ) : ( */}
+                    {/* // CREATE MODE: Show upload component */}
+                    <DropzoneThumbnailComponent 
+                      filePreview={thumbnail}
+                      videoFile={videoFile}
+                      videoId={videoId}
+                      isEdit = {isEditMode}
+                      thumbnailUrl = {videoS3Key}
+                    />
+                  {/* )} */}
+
+                  {/* <DropzoneThumbnailComponent 
+                    filePreview={thumbnail}
+                    videoFile={videoFile}
+                    videoId={videoId}
+                  /> */}
                 </div>
 
                 <div>
-                  <Label>Description</Label>
-                  <TextArea
-                    value={''}
-                    placeholder="Please enter a video description."
-                    // onChange={(value) => setMessage(value)}
-                    rows={6}
-                  />
-                </div>
-                <div>
-                  <Label>Video</Label>
-                  <DropzoneVideoComponent />
-                </div>
-                <div>
-                  <Label>Thumbnail</Label>
-                  <DropzoneComponent />
-                </div>
-                <div>
-                  <Label>Do you want to restrict your video to an adult audience?</Label>
-                  <Radio
-                    id="radio1"
-                    name="group1"
-                    value="option1"
-                    checked={selectedValue === "option1"}
-                    onChange={handleRadioChange}
-                    label="Yes, restrict my video to viewers over 18"
-                  />
-                  <Radio
-                    id="radio2"
-                    name="group1"
-                    value="option2"
-                    checked={selectedValue === "option2"}
-                    onChange={handleRadioChange}
-                    label="No, don't restrict my video to viewers over 18 only"
-                  />
+                  <div>
+                    <Label>Title</Label>
+                    <TextArea
+                      value={videoTitle}
+                      rows={3}
+                      placeholder="Please enter a video title."
+                      onChange={(value) => setVideoTitle(value)}
+                    />
+                  </div>
+                  <div className="mt-5">
+                    <Label>Description</Label>
+                    <TextArea
+                      value={description}
+                      placeholder="Please enter a video description."
+                      rows={6}
+                      onChange={(value) => setDescription(value)}
+                    />
+                  </div>
+
+                  <div className="mt-5">
+                    <Label>Do you want to restrict your video to an adult audience?</Label>
+                    <Radio
+                      className="mt-4"
+                      id="radio1"
+                      name="group1"
+                      value="option1"
+                      checked={selectedValue === "option1"}
+                      onChange={handleRadioChange}
+                      label="Yes, restrict my video to viewers over 18"
+                    />
+                    <Radio
+                      className="mt-4"
+                      id="radio2"
+                      name="group1"
+                      value="option2"
+                      checked={selectedValue === "option2"}
+                      onChange={handleRadioChange}
+                      label="No, don't restrict my video to viewers over 18 only"
+                    />
+                  </div>
+
+                  <div className="mt-5">
+                    <Switch
+                      label = {videoStatus} 
+                      defaultChecked={videoStatus === 'Public'}
+                      onChange={handleSwitchChange}
+                    />
+                  </div>
+
                 </div>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-            <Button size="sm" variant="outline" onClick={closeModal}>
+            <Button size="sm" variant="outline" onClick={handleCloseModal}>
               Close
             </Button>
-            <Button size="sm" onClick={handleSave}>
-              Save Changes
+            <Button 
+              size="sm" 
+              onClick={handleSave}
+              disabled={isSaving || !videoId}
+            >
+              {/* {isSaving ? "Saving..." : "Save Changes"} */}
+              {isSaving ? "Saving..." : isEditMode ? "Update Video" : "Save Changes"}
             </Button>
           </div>
         </form>

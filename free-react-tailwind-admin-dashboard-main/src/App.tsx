@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { VideoEditProvider } from "./context/VideoEditContext";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -22,6 +23,7 @@ import Home from "./pages/Dashboard/Home";
 export default function App() {
   return (
     <>
+    <VideoEditProvider>
       <Router>
         <ScrollToTop />
         <Routes>
@@ -61,6 +63,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
+    </VideoEditProvider>
     </>
   );
 }

@@ -1,0 +1,12 @@
+| Ad Network        | Average RPM (Revenue per 1,000 Impressions) | Revenue Share      | Notes                                                                                                   |
+| ----------------- | ------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------- |
+| **Mediavine**     | $25.40                                      | 75%                | Requires 50,000 monthly sessions; ideal for lifestyle, food, and travel niches. ([bloggernexus.com][1]) |
+| **Ezoic**         | $23.50                                      | 60–70%             | AI-driven optimization; suitable for sites with at least 10,000 monthly visits. ([bloggernexus.com][1]) |
+| **AdThrive**      | $22.70                                      | 75%                | Focuses on premium content; requires 100,000 monthly pageviews. ([bloggernexus.com][1])                 |
+| **BuySellAdsHub** | N/A                                         | 90%                | High revenue share; suitable for tech and design-focused sites. ([buyselladshub.com][2])                |
+| **PropellerAds**  | Varies                                      | 80% (estimated)    | Offers various ad formats; suitable for global traffic. ([buyselladshub.com][2])                        |
+| **AdCash**        | Varies                                      | 70–85% (estimated) | Flexible payment options; suitable for global traffic. ([Earningify][3])                                |
+
+[1]: https://bloggernexus.com/2024/01/09/best-ad-networks-for-bloggers-and-publishers/?utm_source=chatgpt.com "7 Best Ad Networks for Bloggers & Publishers in 2024 - Bloggernexus"
+[2]: https://buyselladshub.com/blog/ad-networks-exchanges/highest-paying-ad-network-the-best-ad-networks-for-publishers-in-2025/?utm_source=chatgpt.com "BuySellAdsHub™ — Highest Paying Ad Network: The Best Ad Networks for Publishers in 2025"
+[3]: https://earningify.com/income-streams/blogging/10-ad-networks-for-publishers-to-boost-revenue/?utm_source=chatgpt.com "10+ Ad Networks For Publishers To Boost Revenue"
