@@ -562,7 +562,7 @@ import { useAuth } from "../../AuthContext";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showLogoutMenu, setShowLogoutMenu] = useState(false);
+  // const [showLogoutMenu, setShowLogoutMenu] = useState(false);
   const { logout, logoutAll, isLoggingOut, profile } = useAuth();
 
   const toggleDropdown = () => setIsOpen(!isOpen);

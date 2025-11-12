@@ -136,8 +136,9 @@ import PageMeta from "../../components/common/PageMeta";
 import VideoCardComponent, { useUserVideos } from "../../components/ecommerce/VideoCardUi";
 
 export default function Home() {
-  const userId = 234;
-  const { videos, loading, error } = useUserVideos(userId);
+  // const userId = 234;
+  // build fix
+  const { videos, loading, error } = useUserVideos();
 
   return (
     <>

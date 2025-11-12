@@ -18,7 +18,7 @@ interface Video {
 interface VideoEditContextType {
   isOpen: boolean;
   videoData: Video | null;
-  openModal: (video: Video) => void;
+  openModal: (video?: Video) => void;
   closeModal: () => void;
 }
 
@@ -28,8 +28,8 @@ export const VideoEditProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isOpen, setIsOpen] = useState(false);
   const [videoData, setVideoData] = useState<Video | null>(null);
 
-  const openModal = (video: Video) => {
-    setVideoData(video);
+  const openModal = (video?: Video) => {
+    setVideoData(video || null);
     setIsOpen(true);
   };
 

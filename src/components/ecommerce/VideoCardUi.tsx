@@ -801,8 +801,6 @@
 
 
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { ShareIcon } from "../../icons";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
@@ -889,7 +887,7 @@ interface VideoCardComponentProps {
 
 export default function VideoCardComponent({ video }: VideoCardComponentProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  // const [isEditOpen, setIsEditOpen] = useState(false);
   const { openModal } = useVideoEdit(); // Get the context function
 
   const handleCardClick = () => {
@@ -898,21 +896,21 @@ export default function VideoCardComponent({ video }: VideoCardComponentProps) {
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
-    setIsEditOpen(false);
+    // setIsEditOpen(false);
   };
 
   const closeDropdown = () => {
     setIsOpen(false);
   };
 
-  const toggleEditDropdown = () => {
-    setIsEditOpen(!isEditOpen);
-    setIsOpen(false);
-  };
+  // const toggleEditDropdown = () => {
+  //   setIsEditOpen(!isEditOpen);
+  //   setIsOpen(false);
+  // };
 
-  const closeEditDropdown = () => {
-    setIsEditOpen(false);
-  };
+  // const closeEditDropdown = () => {
+  //   setIsEditOpen(false);
+  // };
 
   const formatNumber = (num: number | undefined) => {
     if (!num) return "0";

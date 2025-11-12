@@ -539,7 +539,9 @@ const DropzoneVideoComponent: React.FC<DropZoneProps> = ({
         <div className="w-[100%] flex justify-center">
           <div className="relative w-full max-w-[500px] flex align-center justify-center">
             <video
-              src={uploadedVideo}
+              // src={uploadedVideo}
+              // bulid fix
+              src={uploadedVideo instanceof URL ? uploadedVideo.toString() : uploadedVideo}
               controls
               className="h-[400px] w-full rounded-lg bg-black"
             />

@@ -86,7 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Call Django logout endpoint
       if (djangoToken && sessionId) {
         try {
-          await authService.logout(djangoToken, sessionId);
+          // bulid fix
+          await authService.logout(djangoToken);
         } catch (err) {
           console.warn('Backend logout call failed:', err);
         }
@@ -129,7 +130,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Call Django logout-all endpoint
       if (djangoToken) {
         try {
-          await authService.logoutAll(djangoToken);
+          // build fix
+          await authService.logoutAll();
         } catch (err) {
           console.warn('Backend logout-all call failed:', err);
         }
@@ -265,8 +267,8 @@ const handleCallback = async () => {
         console.warn('No auth token available');
         return;
       }
-
-      const data = await authService.getProfile(authToken);
+      // build fix
+      const data = await authService.getProfile();
       setProfile(data);
       localStorage.setItem('user-profile', JSON.stringify(data));
     } catch (err) {

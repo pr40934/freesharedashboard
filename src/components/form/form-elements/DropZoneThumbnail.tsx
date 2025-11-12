@@ -666,7 +666,7 @@ const DropzoneThumbnailComponent: React.FC<DropzoneThumbnailProps> = ({
   isEdit,
   thumbnailUrl
 }) => {
-  const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
+  // const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
   const [currentThumbnail, setCurrentThumbnail] = useState<string | null>(null);
   const [showReplacePreview, setShowReplacePreview] = useState(false);
   const [replacePreview, setReplacePreview] = useState<string | null>(null);
@@ -748,7 +748,7 @@ const DropzoneThumbnailComponent: React.FC<DropzoneThumbnailProps> = ({
         console.log('Uploading thumbnail:', file.name);
         const url = await saveThumbnailImagePath(file.name, file.type, videoId);
         ThumbnailId?.(url?.thumbnail_id);
-        setPresignedUrl(url?.url);
+        // setPresignedUrl(url?.url);
         await thumbnailuploadToS3(url?.url, file);
         console.log("✅ Thumbnail uploaded:", file.name);
       } catch (err) {
@@ -763,7 +763,7 @@ const DropzoneThumbnailComponent: React.FC<DropzoneThumbnailProps> = ({
     if (!file) return;
     try {
       const url = await saveThumbnailImagePath(file.name, file.type, videoId);
-      setPresignedUrl(url?.url);
+      // setPresignedUrl(url?.url);
       await thumbnailuploadToS3(url?.url, file);
       console.log("✅ Thumbnail uploaded via dropzone");
     } catch (err) {
@@ -823,7 +823,7 @@ const DropzoneThumbnailComponent: React.FC<DropzoneThumbnailProps> = ({
       const url = await saveThumbnailImagePath(file.name, file.type, videoId);
       setShowReplacePreview(false);
       ThumbnailId?.(url?.thumbnail_id);
-      setPresignedUrl(url?.url);
+      // setPresignedUrl(url?.url);
       await thumbnailuploadToS3(url?.url, file);
       setCurrentThumbnail(replacePreview);
       setReplacePreview(null);

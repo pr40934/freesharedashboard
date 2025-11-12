@@ -560,7 +560,8 @@ const AppHeader: React.FC = () => {
   }, []);
 
   const handleUploadClick = () => {
-    openModal(null);
+    // openModal(null);
+    openModal();
   };
 
   return (
@@ -641,11 +642,15 @@ function UploadModel() {
       setVideoId(videoData.id);
       setVideoTitle(videoData.title);
       setDescription(videoData.description || '');
-      setVideoS3Key(videoData.s3_key);
+      // setVideoS3Key( videoData?.s3_key ?? null);
+      setVideoS3Key((videoData as any)?.s3_key ?? null);
+
       setThumbnail(videoData.thumbnail ? `${CLOUDFRONT_URL}${videoData.thumbnail}` : null);
       setOriginalFileName(videoData.filename);
       setvideoStatus(videoData.status === 'PRIVATE' ? 'Private' : 'Public');
-      setSelectedValue(videoData.eighteenPlus ? "option1" : "option2");
+      // setSelectedValue(videoData.eighteenPlus ? "option1" : "option2");
+      setSelectedValue((videoData as any)?.eighteenPlus ? "option1" : "option2");
+
     } else {
       setIsEditMode(false);
       setOriginalFileName('');
@@ -821,7 +826,9 @@ function UploadModel() {
                     videoFile={videoFile}
                     videoId={videoId}
                     isEdit={isEditMode}
-                    thumbnailUrl={videoData?.thumbnail}
+                    // thumbnailUrl={videoData?.thumbnail}
+                    thumbnailUrl={videoData?.thumbnail ?? null}
+
                   />
                 </div>
 
