@@ -807,6 +807,7 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
 import { useVideoEdit } from "../../context/VideoEditContext";
+import { getUserVideos } from "../../services/api";
 
 // Hook
 interface Video {
@@ -823,7 +824,38 @@ interface Video {
   comments?: number;
 }
 
-export const useUserVideos = (userId: number) => {
+// export const useUserVideos = (userId: number) => {
+//   const [videos, setVideos] = useState<Video[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const fetchVideos = async () => {
+//       try {
+//         setLoading(true);
+//         const response = await axios.get(
+//           `http://localhost:8000/api/user-videos/${userId}/`
+//         );
+//         setVideos(response.data.videos);
+//         setError(null);
+//       } catch (err) {
+//         setError("Failed to fetch videos");
+//         console.error(err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     if (userId) {
+//       fetchVideos();
+//     }
+//   }, [userId]);
+
+//   return { videos, loading, error };
+// };
+
+
+export const useUserVideos = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -832,26 +864,23 @@ export const useUserVideos = (userId: number) => {
     const fetchVideos = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          `http://localhost:8000/api/user-videos/${userId}/`
-        );
-        setVideos(response.data.videos);
-        setError(null);
-      } catch (err) {
+        const res = await getUserVideos(); // ✅ use API helper
+        setVideos(res.videos);
+      } catch {
         setError("Failed to fetch videos");
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    if (userId) {
-      fetchVideos();
-    }
-  }, [userId]);
+    fetchVideos();
+  }, []);
 
   return { videos, loading, error };
 };
+
+
+
 
 // Component
 interface VideoCardComponentProps {
