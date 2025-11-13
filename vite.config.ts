@@ -34,7 +34,7 @@ export default defineConfig({
       },
     }),
   ],
-  server: {
-    port: 5173, // change to your desired port
-  },
+  // server: {
+  //   port: 5173, // change to your desired port
+  // },
 });
