@@ -315,6 +315,7 @@ import VideoComponentCard from "../../common/VideoComponentCard";
 import { useDropzone } from "react-dropzone";
 import UploadPreviewModal from "./UploadPreviewModal";
 import { getPresignedUrls, completeMultipartUpload } from "../../../services/api";
+import {CDN_DOMAIN} from '../../../services/api';
 
 interface DropZoneProps {
   onFileNameChange: (fileName: string) => void;
@@ -440,7 +441,7 @@ const DropzoneVideoComponent: React.FC<DropZoneProps> = ({
   // ✅ Load existing video in EDIT mode
   useEffect(() => {
     if (isEdit === true && videoUrl) {
-      setUploadedVideo(`https://d1f96o9nypo8e0.cloudfront.net/${videoUrl}`);
+      setUploadedVideo(`${CDN_DOMAIN}${videoUrl}`);
     } else {
       setUploadedVideo(null);
     }

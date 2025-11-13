@@ -648,6 +648,7 @@ import { useState, useEffect, useRef } from "react";
 import ComponentCard from "../../common/ComponentCard";
 import { useDropzone } from "react-dropzone";
 import { saveThumbnailImagePath, thumbnailuploadToS3 } from "../../../services/api";
+import {CDN_DOMAIN} from '../../../services/api';
 
 interface DropzoneThumbnailProps {
   filePreview: string | null;
@@ -672,7 +673,7 @@ const DropzoneThumbnailComponent: React.FC<DropzoneThumbnailProps> = ({
   const [replacePreview, setReplacePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const CLOUDFRONT_URL = "https://d1f96o9nypo8e0.cloudfront.net/";
+  const CLOUDFRONT_URL = CDN_DOMAIN;
 
   const generateTimestamp = () => {
     const now = new Date();

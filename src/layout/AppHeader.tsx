@@ -525,6 +525,8 @@ import { saveVideoMetadata, saveThumbnailImagePath, thumbnailuploadToS3 } from '
 
 import { useVideoEdit } from "../context/VideoEditContext";
 
+import {CDN_DOMAIN} from '../services/api';
+
 const AppHeader: React.FC = () => {
   const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
   const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
@@ -634,7 +636,7 @@ function UploadModel() {
   const [videoStatus, setvideoStatus] = useState<string>('Public');
   const [isSaving, setIsSaving] = useState(false);
 
-  const CLOUDFRONT_URL = "https://d1f96o9nypo8e0.cloudfront.net/";
+  const CLOUDFRONT_URL = CDN_DOMAIN;
 
   useEffect(() => {
     if (videoData) {

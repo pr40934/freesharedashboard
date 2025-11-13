@@ -806,6 +806,7 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
 import { useVideoEdit } from "../../context/VideoEditContext";
 import { getUserVideos } from "../../services/api";
+import {CDN_DOMAIN} from '../../services/api';
 
 // Hook
 interface Video {
@@ -1015,7 +1016,7 @@ export default function VideoCardComponent({ video }: VideoCardComponentProps) {
           <div className="max-h-[330px] overflow-hidden">
             <img
               // eslint-disable-next-line no-constant-binary-expression
-              src={`http://d1f96o9nypo8e0.cloudfront.net/${video.thumbnail}` || "/default-thumbnail.jpg"}
+              src={`${CDN_DOMAIN}${video.thumbnail}` || "/default-thumbnail.jpg"}
               alt={video.title}
               className="w-full h-[200px] object-cover rounded-lg border-gray-200"
               loading="lazy"
