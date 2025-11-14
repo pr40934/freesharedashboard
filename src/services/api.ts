@@ -263,7 +263,8 @@ import axios from 'axios';
 
 // const API_BASE_URL = 'http://localhost:8000';
 
-const API_BASE_URL = 'http://34.93.213.137:8000';
+// const API_BASE_URL = 'http://34.93.213.137:8000';
+const API_BASE_URL = 'https://api.freeshare.world';
 
 export const CDN_DOMAIN = 'https://cdn.greenheavens.life/';
 
